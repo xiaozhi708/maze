@@ -1,5 +1,5 @@
 /**
- * Created by Administrator on 2018/5/13/013.
+ * Created by 梁志承 on 2018/5/13/013.
  */
 
 import javax.swing.*;
@@ -49,12 +49,6 @@ public class Maze {
         pageInit();
     }
 
-    Maze(int[][] maze, JButton[][] jbtn) {
-        this.maze = maze;
-        this.jbtn = jbtn;
-        pageInit();
-    }
-
     /**
      * 方法
      */
@@ -93,6 +87,7 @@ public class Maze {
         //运行按钮构建
         run = new JButton("运行");
 
+        //将菜单栏，文本域，运行按钮添加到pf面板上
         pf.add(bar, BorderLayout.NORTH);
         pf.add(ta, BorderLayout.CENTER);
         pf.add(run, BorderLayout.SOUTH);
@@ -113,7 +108,7 @@ public class Maze {
                 pm.add(jbtn[i][j]);
             }
         }
-
+        //将面板添加到窗口上并显示化窗口
         f.add(pm);
         f.add(pf);
         f.setVisible(true);
@@ -304,7 +299,7 @@ public class Maze {
                     if(!hasPath){              //没有从开始节点到结束节点的路径
                         JOptionPane.showMessageDialog(null, "没有从开始节点到结束节点的路径！", "结果提示", JOptionPane.ERROR_MESSAGE);
                     }
-                }else{//开始节点或结束节点不合理（无路可走，四周都是石头或边界）
+                }else{//开始节点或结束节点不合理（无路可走，四周都是石头或边界），重置迷宫
                     setStart=false;
                     setEnd=false;
                     maze[startX][startY]=0;
@@ -321,7 +316,7 @@ public class Maze {
         //窗口关闭功能
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                hang = 0;//退出之前将hang置0，为接下来再一次导入做准备
+//                hang = 0;//退出之前将hang置0，为接下来再一次导入做准备
                 System.exit(0);
             }
         });
@@ -332,9 +327,9 @@ public class Maze {
      */
     // 栈中的结点
     class MazeNode {
-        int x;
-        int y;
-        int direction;
+        int x;//行坐标
+        int y;//列坐标
+        int direction;//节点方向
 
         public MazeNode(int x, int y, int dir) {
             this.x = x;
@@ -360,18 +355,18 @@ public class Maze {
 
     //得到迷宫的行数和列数
     public void getSizeOfMaze() {
-        mazeSizeX = maze.length;
-        mazeSizeY = maze[0].length;
+        mazeSizeX = maze.length;//行数
+        mazeSizeY = maze[0].length;//列数
     }
 
     //为算法运行做准备
     public void prepareForArithmetic() {
-        getStartAndEndPosition();
-        getSizeOfMaze();
-        mark = new int[mazeSizeX][mazeSizeY];
+        getStartAndEndPosition();//得到起点和终点的位置
+        getSizeOfMaze();//得到迷宫的大小
+        mark = new int[mazeSizeX][mazeSizeY];//创建标志数组
     }
 
-    //初始化标志函数（1表示位置已经走过，0表示位置还未走过）
+    //初始化标志数组（1表示位置已经走过，0表示位置还未走过）
     private void initMark() {
         for (int i = 0; i < mazeSizeX; i++) {
             for (int j = 0; j < mazeSizeY; j++) {
@@ -380,7 +375,7 @@ public class Maze {
         }
     }
 
-    //检查走的迷宫节点的合法性(防止下标越界，当前节点不是石块节点且未走过)
+    //检查走的迷宫节点的合法性(下标未越界，不为石块节点且未走过)
     public boolean checkLegalityOfMazeNode(MazeNode mazeNode) {
         if (mazeNode.x >= 0 && mazeNode.x < mazeSizeX && mazeNode.y >= 0 && mazeNode.y < mazeSizeY
                 && (maze[mazeNode.x][mazeNode.y] != 1) && mark[mazeNode.x][mazeNode.y] == 0) {
@@ -392,11 +387,13 @@ public class Maze {
     }
 
 
-    //检查开始节点和结束节点是否合理
+    //检查开始节点和结束节点是否合理（下标未越界，不为石块且周围有可走节点）
     public boolean checkLegalityOfStartAndEnd(MazeNode mazeNode) {
         boolean legality =false;
+        //节点下标没越界，且当前节点不为石块
         if (mazeNode.x >= 0 && mazeNode.x < mazeSizeX && mazeNode.y >= 0 && mazeNode.y < mazeSizeY
                 && (maze[mazeNode.x][mazeNode.y] != 1)) {
+            //确保节点没被石块包围
             if((mazeNode.x-1)>=0&&maze[mazeNode.x-1][mazeNode.y]!=1){
                 legality=true;
             }
@@ -416,80 +413,86 @@ public class Maze {
 
     }
 
-    // 下一个位置，从右开始，顺时针
-    public MazeNode nextPos(MazeNode mazeNode) {
+    // 下一个位置，从右开始，顺时针（即右下左上，分别用1,2,3,4表示）
+    public void nextPos(MazeNode mazeNode) {
         MazeNode newMazeNode = new MazeNode(mazeNode.x, mazeNode.y, mazeNode.direction);
         switch (mazeNode.direction) {
             case 1:
+                //如果当前节点的方向为1（右），则往右走看是否可走（不越界，不为石块，且未走过）
                 if (newMazeNode.y + 1 < mazeSizeY && maze[newMazeNode.x][newMazeNode.y + 1] != 1 && mark[newMazeNode.x][newMazeNode.y + 1] != 1) {
-                    newMazeNode.y += 1;
-                    newMazeNode.direction = 1;
-                    stack.push(newMazeNode);
-                } else {
-                    newMazeNode = stack.pop();//先弹出去，换个方向再进来
-                    newMazeNode.direction++;
-                    stack.push(newMazeNode);
-                    mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置，重新判定，入栈，故mark标记置0
+                    newMazeNode.y += 1;//往右走了一步
+                    newMazeNode.direction = 1;//初始化方向为1
+                    stack.push(newMazeNode);//将新节点压入栈
+                } else {//如果不可走，则将当前节点弹出栈，方向加1再压入栈，等待下一次判定
+                    newMazeNode = stack.pop();//先弹出去
+                    newMazeNode.direction++;//方向加1
+                    stack.push(newMazeNode);//再压入栈
+                    mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置重新判定，故mark标记置0
                 }
                 break;
             case 2:
+                //如果当前节点的方向为2（下），则往下走看是否可走（不越界，不为石块，且未走过）
                 if (newMazeNode.x + 1 < mazeSizeX && maze[newMazeNode.x + 1][newMazeNode.y] != 1 && mark[newMazeNode.x + 1][newMazeNode.y] != 1) {
-                    newMazeNode.x += 1;
-                    newMazeNode.direction = 1;
-                    stack.push(newMazeNode);
-                } else {
-                    newMazeNode = stack.pop();//先弹出去，换个方向再进来
-                    newMazeNode.direction++;
-                    stack.push(newMazeNode);
-                    mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置，重新判定，入栈，故mark标记置0
+                    newMazeNode.x += 1;//往下走了一步
+                    newMazeNode.direction = 1;//初始化方向为1
+                    stack.push(newMazeNode);//将新节点压入栈
+                } else {//如果不可走，则将当前节点弹出栈，方向加1再压入栈，等待下一次判定
+                    newMazeNode = stack.pop();//先弹出去
+                    newMazeNode.direction++;//方向加1
+                    stack.push(newMazeNode);//再压入栈
+                    mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置重新判定，故mark标记置0
                 }
                 break;
             case 3:
+                //如果当前节点的方向为3（左），则往左走看是否可走（不越界，不为石块，且未走过）
                 if (newMazeNode.y - 1 >= 0 && maze[newMazeNode.x][newMazeNode.y - 1] != 1 && mark[newMazeNode.x][newMazeNode.y - 1] != 1) {
-                    newMazeNode.y -= 1;
-                    newMazeNode.direction = 1;
-                    stack.push(newMazeNode);
-                } else {
-                    newMazeNode = stack.pop();//先弹出去，换个方向再进来
-                    newMazeNode.direction++;
-                    stack.push(newMazeNode);
-                    mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置，重新判定，入栈，故mark标记置0
+                    newMazeNode.y -= 1;//往左走了一步
+                    newMazeNode.direction = 1;//初始化方向为1
+                    stack.push(newMazeNode);//将新节点压入栈
+                } else {//如果不可走，则将当前节点弹出栈，方向加1再压入栈，等待下一次判定
+                    newMazeNode = stack.pop();//先弹出去
+                    newMazeNode.direction++;//方向加1
+                    stack.push(newMazeNode);//再压入栈
+                    mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置重新判定，故mark标记置0
                 }
                 break;
             case 4:
+                //如果当前节点的方向为4（上），则往上走看是否可走（不越界，不为石块，且未走过）
                 if (newMazeNode.x - 1 >= 0 && maze[newMazeNode.x - 1][newMazeNode.y] != 1 && mark[newMazeNode.x - 1][newMazeNode.y] != 1) {
-                    newMazeNode.x -= 1;
-                    newMazeNode.direction = 1;
-                    stack.push(newMazeNode);
-                } else {
+                    newMazeNode.x -= 1;//往上走了一步
+                    newMazeNode.direction = 1;//初始化方向为1
+                    stack.push(newMazeNode);//将新节点压入栈
+                } else {//如果不可走，则弹出栈，若弹栈后栈顶节点方向仍为4则继续弹出，直至栈顶节点方向不为4
                     while (newMazeNode.direction == 4&&!stack.isEmpty()) {
                         newMazeNode = stack.pop();
                         mark[newMazeNode.x][newMazeNode.y] = 0;
                     }
-                    if(newMazeNode.direction<4){//如果栈中还有可拓展节点，如果没有的话返回原始节点
-                        newMazeNode.direction++;
-                        stack.push(newMazeNode);
-                        mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置，重新判定，入栈，故mark标记置0
-                    }
+                    if(newMazeNode.direction<4){//如果栈中还有可拓展节点(即方向比4小的节点)
+                        newMazeNode.direction++;//方向加1
+                        stack.push(newMazeNode);//再压入栈
+                        mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置重新判定，故mark标记置0
+                    }//如果没有的话则不做任何操作，栈顶元素仍为原始节点，再次判断时进入else部分，即弹出栈
 
                 }
                 break;
             default:
                 break;
         }
-        return newMazeNode;
+
     }
 
     //迷宫算法的主体函数
     public void process() {
+        //将所有节点都标记为未走过节点
         initMark();
+        //将起点压入栈
         MazeNode mazeNode = new MazeNode(startX, startY, 1);
         stack.push(mazeNode);
         do {
             // 此路径可走 maze:0代表可走，1代表不可走,2代表起点，3代表终点
             System.out.println("当前x：" + mazeNode.x + ",当前y：" + mazeNode.y + ",当前方向：" + mazeNode.direction);
-            if (checkLegalityOfMazeNode(stack.peek())) {//判断当前节点是否合法（节点下标无越界，节点可走且有可走临近点）
-                mark[mazeNode.x][mazeNode.y] = 1;//标级节点已走过
+            if (checkLegalityOfMazeNode(stack.peek())) {    //判断当前节点是否合法（节点下标无越界，节点可走且未走过）
+                mark[mazeNode.x][mazeNode.y] = 1;           //标级节点已走过
                 jbtn[mazeNode.x][mazeNode.y].setBackground(Color.black);//将当前格子背景色设为黑色
 //                try {
 //                    Thread.sleep(100);
@@ -519,10 +522,11 @@ public class Maze {
                     return;
                 }
                 //获取下一个节点
-                mazeNode = nextPos(mazeNode);
+                nextPos(mazeNode);
             }
             // 走不通
             else {
+                //直接弹出
                 if (!stack.isEmpty()) {
                     stack.pop();
                 }
