@@ -414,7 +414,7 @@ public class Maze {
     }
 
     // 下一个位置，从右开始，顺时针（即右下左上，分别用1,2,3,4表示）
-    public void nextPos(MazeNode mazeNode) {
+    public MazeNode nextPos(MazeNode mazeNode) {
         MazeNode newMazeNode = new MazeNode(mazeNode.x, mazeNode.y, mazeNode.direction);
         switch (mazeNode.direction) {
             case 1:
@@ -478,7 +478,7 @@ public class Maze {
             default:
                 break;
         }
-
+        return newMazeNode;
     }
 
     //迷宫算法的主体函数
@@ -522,7 +522,8 @@ public class Maze {
                     return;
                 }
                 //获取下一个节点
-                nextPos(mazeNode);
+                mazeNode = nextPos(mazeNode);
+              
             }
             // 走不通
             else {
