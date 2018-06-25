@@ -32,7 +32,7 @@ public class Maze {
      */
     private Stack<MazeNode> stack = new Stack<MazeNode>();      // 栈
     private int[][] mark;                                       // 标记路径是否已走过,1代表走过，0代表未走过
-    private boolean hasPath =false;                             //是否有从起点到终点的路径
+    private boolean hasPath = false;                             //是否有从起点到终点的路径
     private int mazeSizeX = 8;                                  //迷宫的行数
     private int mazeSizeY = 8;                                  //迷宫的列数
     private int startX = 0;                                     //起点横坐标
@@ -41,7 +41,7 @@ public class Maze {
     private int endY = 7;                                       //终点纵坐标
 
     /**
-     * 构造函数
+     * 迷宫类构造函数
      */
     Maze() {
         maze = new int[8][8];
@@ -49,10 +49,10 @@ public class Maze {
         pageInit();
     }
 
+
     /**
-     * 方法
+     * 页面初始化
      */
-    //页面初始化
     public void pageInit() {
         //得到屏幕的大小
         Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -117,7 +117,11 @@ public class Maze {
         myEvent();
     }
 
-    //将文本中的内容同步到jbtn和maze中(逐行)
+    /**
+     * 将文本中的内容同步到jbtn和maze中(逐行)
+     *
+     * @param line 一行文本
+     */
     private void ds(String line) {
         String[] temp = new String[8];
         temp = line.split("\\s+");
@@ -141,7 +145,12 @@ public class Maze {
 
     }
 
-    //将文本中的内容同步到jbtn和maze中(整个文本)
+
+    /**
+     * 将文本中的内容同步到jbtn和maze中(整个文本)
+     *
+     * @param text 整段文本
+     */
     private void dsall(String text) {
         String[] h = new String[8];
         String[] temp = new String[8];
@@ -164,7 +173,9 @@ public class Maze {
 
     }
 
-    //监听事件
+    /**
+     * 监听事件
+     */
     public void myEvent() {
         //设置保存文件的功能
         saveItem.addActionListener(new ActionListener() {
@@ -264,7 +275,7 @@ public class Maze {
                         if (e.getButton() == e.BUTTON1) {//点击鼠标左键
                             JButton source = (JButton) e.getSource();
                             if (!setStart) {
-                                if(source.getBackground()==Color.green){//非石头节点才可以设置为起始节点
+                                if (source.getBackground() == Color.green) {//非石头节点才可以设置为起始节点
                                     source.setBackground(Color.blue);//起点为蓝色
                                     setStart = true;
                                     maze[ini][inj] = 2;
@@ -273,7 +284,7 @@ public class Maze {
                         } else if (e.getButton() == e.BUTTON3) {//点击鼠标右键
                             JButton source = (JButton) e.getSource();
                             if (!setEnd) {
-                                if(source.getBackground()==Color.green){//非石头节点才可以设置为结束节点
+                                if (source.getBackground() == Color.green) {//非石头节点才可以设置为结束节点
                                     source.setBackground(Color.red);//终点为红色
                                     setEnd = true;
                                     maze[ini][inj] = 3;
@@ -292,18 +303,18 @@ public class Maze {
                 prepareForArithmetic();     //为算法准备数据
                 //检查开始节点和结束节点和合理性
                 MazeNode startMazeNode = new MazeNode(startX, startY, 1);//开始节点
-                MazeNode endMazeNode =new MazeNode(endX,endY,1);//结束节点
-                if(checkLegalityOfStartAndEnd(startMazeNode)&&checkLegalityOfStartAndEnd(endMazeNode)){//如果开始节点和结束节点都合理
+                MazeNode endMazeNode = new MazeNode(endX, endY, 1);//结束节点
+                if (checkLegalityOfStartAndEnd(startMazeNode) && checkLegalityOfStartAndEnd(endMazeNode)) {//如果开始节点和结束节点都合理
                     process();                  //开始运行算法
-                    System.out.println("是否有从起点到终点的路径："+hasPath);
-                    if(!hasPath){              //没有从开始节点到结束节点的路径
+                    System.out.println("是否有从起点到终点的路径：" + hasPath);
+                    if (!hasPath) {              //没有从开始节点到结束节点的路径
                         JOptionPane.showMessageDialog(null, "没有从开始节点到结束节点的路径！", "结果提示", JOptionPane.ERROR_MESSAGE);
                     }
-                }else{//开始节点或结束节点不合理（无路可走，四周都是石头或边界），重置迷宫
-                    setStart=false;
-                    setEnd=false;
-                    maze[startX][startY]=0;
-                    maze[endX][endY]=0;
+                } else {//开始节点或结束节点不合理（无路可走，四周都是石头或边界），重置迷宫
+                    setStart = false;
+                    setEnd = false;
+                    maze[startX][startY] = 0;
+                    maze[endX][endY] = 0;
                     jbtn[startX][startY].setBackground(Color.green);
                     jbtn[endX][endY].setBackground(Color.green);
                     JOptionPane.showMessageDialog(null, "开始节点或结束节点不合理！", "出错提示", JOptionPane.ERROR_MESSAGE);
@@ -323,9 +334,8 @@ public class Maze {
     }
 
     /**
-     * 跟算法有关的方法
+     * 迷宫节点类
      */
-    // 栈中的结点
     class MazeNode {
         int x;//行坐标
         int y;//列坐标
@@ -338,7 +348,9 @@ public class Maze {
         }
     }
 
-    //得到开始节点和结束节点的位置
+    /**
+     * 得到开始节点和结束节点的位置
+     */
     public void getStartAndEndPosition() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
@@ -353,20 +365,26 @@ public class Maze {
         }
     }
 
-    //得到迷宫的行数和列数
+    /**
+     * 得到迷宫的行数和列数
+     */
     public void getSizeOfMaze() {
         mazeSizeX = maze.length;//行数
         mazeSizeY = maze[0].length;//列数
     }
 
-    //为算法运行做准备
+    /**
+     * 为算法运行做准备
+     */
     public void prepareForArithmetic() {
         getStartAndEndPosition();//得到起点和终点的位置
         getSizeOfMaze();//得到迷宫的大小
         mark = new int[mazeSizeX][mazeSizeY];//创建标志数组
     }
 
-    //初始化标志数组（1表示位置已经走过，0表示位置还未走过）
+    /**
+     * 初始化标志数组（1表示位置已经走过，0表示位置还未走过）
+     */
     private void initMark() {
         for (int i = 0; i < mazeSizeX; i++) {
             for (int j = 0; j < mazeSizeY; j++) {
@@ -375,7 +393,12 @@ public class Maze {
         }
     }
 
-    //检查走的迷宫节点的合法性(下标未越界，不为石块节点且未走过)
+    /**
+     * 检查走的迷宫节点的合法性(下标未越界，不为石块节点且未走过)
+     *
+     * @param mazeNode 被检查的节点
+     * @return
+     */
     public boolean checkLegalityOfMazeNode(MazeNode mazeNode) {
         if (mazeNode.x >= 0 && mazeNode.x < mazeSizeX && mazeNode.y >= 0 && mazeNode.y < mazeSizeY
                 && (maze[mazeNode.x][mazeNode.y] != 1) && mark[mazeNode.x][mazeNode.y] == 0) {
@@ -387,24 +410,29 @@ public class Maze {
     }
 
 
-    //检查开始节点和结束节点是否合理（下标未越界，不为石块且周围有可走节点）
+    /**
+     * 检查开始节点和结束节点是否合理（下标未越界，不为石块且周围有可走节点）
+     *
+     * @param mazeNode 被检查的节点
+     * @return
+     */
     public boolean checkLegalityOfStartAndEnd(MazeNode mazeNode) {
-        boolean legality =false;
+        boolean legality = false;
         //节点下标没越界，且当前节点不为石块
         if (mazeNode.x >= 0 && mazeNode.x < mazeSizeX && mazeNode.y >= 0 && mazeNode.y < mazeSizeY
                 && (maze[mazeNode.x][mazeNode.y] != 1)) {
             //确保节点没被石块包围
-            if((mazeNode.x-1)>=0&&maze[mazeNode.x-1][mazeNode.y]!=1){
-                legality=true;
+            if ((mazeNode.x - 1) >= 0 && maze[mazeNode.x - 1][mazeNode.y] != 1) {
+                legality = true;
             }
-            if(mazeNode.x+1<mazeSizeX&&maze[mazeNode.x+1][mazeNode.y]!=1){
-                legality=true;
+            if (mazeNode.x + 1 < mazeSizeX && maze[mazeNode.x + 1][mazeNode.y] != 1) {
+                legality = true;
             }
-            if(mazeNode.y-1>=0&&maze[mazeNode.x][mazeNode.y-1]!=1){
-                legality=true;
+            if (mazeNode.y - 1 >= 0 && maze[mazeNode.x][mazeNode.y - 1] != 1) {
+                legality = true;
             }
-            if(mazeNode.y+1<mazeSizeX&&maze[mazeNode.x][mazeNode.y+1]!=1){
-                legality=true;
+            if (mazeNode.y + 1 < mazeSizeX && maze[mazeNode.x][mazeNode.y + 1] != 1) {
+                legality = true;
             }
             return legality;
         } else {
@@ -413,7 +441,12 @@ public class Maze {
 
     }
 
-    // 下一个位置，从右开始，顺时针（即右下左上，分别用1,2,3,4表示）
+    /**
+     * 得到下一个节点，从右开始，顺时针（即右下左上，分别用1,2,3,4表示）
+     *
+     * @param mazeNode
+     * @return
+     */
     public MazeNode nextPos(MazeNode mazeNode) {
         MazeNode newMazeNode = new MazeNode(mazeNode.x, mazeNode.y, mazeNode.direction);
         switch (mazeNode.direction) {
@@ -463,11 +496,11 @@ public class Maze {
                     newMazeNode.direction = 1;//初始化方向为1
                     stack.push(newMazeNode);//将新节点压入栈
                 } else {//如果不可走，则弹出栈，若弹栈后栈顶节点方向仍为4则继续弹出，直至栈顶节点方向不为4
-                    while (newMazeNode.direction == 4&&!stack.isEmpty()) {
+                    while (newMazeNode.direction == 4 && !stack.isEmpty()) {
                         newMazeNode = stack.pop();
                         mark[newMazeNode.x][newMazeNode.y] = 0;
                     }
-                    if(newMazeNode.direction<4){//如果栈中还有可拓展节点(即方向比4小的节点)
+                    if (newMazeNode.direction < 4) {//如果栈中还有可拓展节点(即方向比4小的节点)
                         newMazeNode.direction++;//方向加1
                         stack.push(newMazeNode);//再压入栈
                         mark[newMazeNode.x][newMazeNode.y] = 0;//回退到之前位置重新判定，故mark标记置0
@@ -481,7 +514,9 @@ public class Maze {
         return newMazeNode;
     }
 
-    //迷宫算法的主体函数
+    /**
+     * 迷宫算法的主体函数
+     */
     public void process() {
         //将所有节点都标记为未走过节点
         initMark();
@@ -502,7 +537,7 @@ public class Maze {
                 //stack.push(mazeNode);
                 // 已到终点
                 if (mazeNode.x == endX && mazeNode.y == endY) {
-                    hasPath=true;                                                   //有从起点到终点的路径
+                    hasPath = true;                                                   //有从起点到终点的路径
                     MazeNode node;
                     while (!stack.isEmpty()) {
                         node = stack.pop();
@@ -523,7 +558,7 @@ public class Maze {
                 }
                 //获取下一个节点
                 mazeNode = nextPos(mazeNode);
-              
+
             }
             // 走不通
             else {
@@ -538,8 +573,12 @@ public class Maze {
 
     }
 
-    //打印出迷宫
-    public void drawMaze() {
+    /**
+     * 打印出迷宫
+     *
+     * @param maze
+     */
+    public void drawMaze(int[][] maze) {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
                 System.out.print(maze[i][j]);
