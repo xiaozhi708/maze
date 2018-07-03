@@ -539,14 +539,21 @@ public class Maze {
                 if (mazeNode.x == endX && mazeNode.y == endY) {
                     hasPath = true;                                                   //有从起点到终点的路径
                     MazeNode node;
+                    int pathNodeNum =0;                                              //成功路径节点数
                     while (!stack.isEmpty()) {
                         node = stack.pop();
                         if (node.x == startX && node.y == startY) {                  //起点设为蓝色
                             jbtn[node.x][node.y].setBackground(Color.blue);
+                            pathNodeNum++;
+                            jbtn[node.x][node.y].setText(pathNodeNum+"");
                         } else if (node.x == endX && node.y == endY) {              //终点设为红色
                             jbtn[node.x][node.y].setBackground(Color.red);
+                            pathNodeNum++;
+                            jbtn[node.x][node.y].setText(pathNodeNum+"");
                         } else {                                                    //除了起点和终点，路径上的其他节点都变为白色
                             jbtn[node.x][node.y].setBackground(Color.white);
+                            pathNodeNum++;
+                            jbtn[node.x][node.y].setText(pathNodeNum+"");
                         }
                         try {
                             Thread.sleep(10);
