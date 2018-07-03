@@ -1,8 +1,9 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="maze:jar">
+  <artifact type="jar" name="maze:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/maze_jar</output-path>
     <root id="archive" name="maze.jar">
       <element id="module-output" name="maze" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/lib/junit-4.10.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
